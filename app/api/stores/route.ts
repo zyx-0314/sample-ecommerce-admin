@@ -12,6 +12,15 @@ export async function POST(request: Request) {
 
 		if (!name) return new NextResponse('Name is required', { status: 400 });
 
+		const store = await prismadb.store.findFirst({
+			where: {
+				name,
+			},
+		});
+
+		if (store)
+			return new NextResponse('Name is already taken', { status: 400 });
+
 		const response = await prismadb.store.create({
 			data: {
 				name,
