@@ -1,7 +1,16 @@
 "use client"
 
 import * as z from 'zod'
+import axios from 'axios'
+import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+import { Input } from '@/components/ui/input'
+import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/button'
+import { useStoreModal } from '@/hooks/use-store-modal'
 import
 {
   Form,
@@ -11,14 +20,6 @@ import
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
-import { Modal } from '@/components/ui/modal'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useStoreModal } from '@/hooks/use-store-modal'
-import { Input } from '@/components/ui/input'
-import { Button } from '../ui/button'
-import { useState } from 'react'
-import axios from 'axios'
-import { toast } from 'react-hot-toast'
 
 const formSchema = z.object( {
   name: z.string().nonempty( 'Store name is required' ),
@@ -45,22 +46,17 @@ export const StoreModal = () =>
     try
     {
       setLoading( true )
-      const response = await axios.post( '/api/stores', values )
-
-      toast.success( "Store created successfully" )
-
-      setTimeout( () =>
-      {
-        window.location.assign( `/${ response.data.id }` )
-      }, 3000 )
-    } catch ( error )
-    {
-      console.log( error )
-      toast.error( "Something went wrong" )
-    } finally
-    {
-      setLoading( false )
+      await axios
+        .post( '/api/stores', values )
+        .then( ( response ) =>
+        {
+          toast.success( "Store created successfully" )
+          window.location.assign( `/${ response.data.id }` )
+        } )
+        .catch( ( error ) => toast.error( error.response.data ) )
     }
+    catch ( error ) { toast.error( "Something went wrong" ) }
+    finally { setLoading( false ) }
   }
 
   return (

@@ -1,5 +1,5 @@
-import prismadb from '@/lib/prismadb';
 import { auth } from '@clerk/nextjs';
+import prismadb from '@/lib/prismadb';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -12,13 +12,13 @@ export async function POST(request: Request) {
 
 		if (!name) return new NextResponse('Name is required', { status: 400 });
 
-		const store = await prismadb.store.findFirst({
+		const duplicatedStoreName = await prismadb.store.findFirst({
 			where: {
 				name,
 			},
 		});
 
-		if (store)
+		if (duplicatedStoreName)
 			return new NextResponse('Name is already taken', { status: 400 });
 
 		const response = await prismadb.store.create({
