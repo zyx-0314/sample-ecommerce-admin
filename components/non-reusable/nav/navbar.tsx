@@ -2,8 +2,8 @@ import prismadb from "@/lib/prismadb"
 import { redirect } from "next/navigation"
 import { UserButton, auth } from "@clerk/nextjs"
 
-import { MainNav } from "@/components/non-reusable/main-nav"
-import { StoreSwitcher } from "@/components/non-reusable/store-switcher"
+import { MainNav } from "@/components/non-reusable/nav/main-nav"
+import { StoreSwitcher } from "@/components/non-reusable/nav/store-switcher"
 
 export const Navbar = async () =>
 {
