@@ -8,7 +8,7 @@ import { CopyCheck, MoreHorizontal, PenBox, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { AlertModal } from "@/components/modals/alert-modal"
-import { BillboardColumn } from "@/components/non-reusable/billboard/columns"
+import { CategoryColumn } from "@/components/non-reusable/category/columns"
 import
 {
   DropdownMenu,
@@ -21,7 +21,7 @@ import
 
 interface CellActionProps
 {
-  data: BillboardColumn
+  data: CategoryColumn
 }
 
 export const CellAction = ( {
@@ -33,24 +33,24 @@ export const CellAction = ( {
   const [ loading, setLoading ] = useState( false )
   const [ open, setOpen ] = useState( false )
 
-  const handleUpdateBillboard = () => router.push( `/${ params.storeId }/billboards/${ data.id }` )
+  const handleUpdateCategory = () => router.push( `/${ params.storeId }/categories/${ data.id }` )
 
-  const handleDeleteBillboard = async () =>
+  const handleDeleteCategory = async () =>
   {
     setLoading( true )
     try
     {
       await axios
-        .delete( `/api/${ params.storeId }/billboards/${ data.id }` )
+        .delete( `/api/${ params.storeId }/categories/${ data.id }` )
         .then( () =>
         {
-          toast.success( "Billboard deleted successfully" )
+          toast.success( "Category deleted successfully" )
           router.refresh()
         } )
         .catch( ( error ) => toast.error( `${ error.response.data.message } ${ error.response.data }` ) )
     }
     catch ( error ) { toast.error( "Something went wrong" ) }
-    finally
+    finally 
     {
       setOpen( false )
       setLoading( false )
@@ -68,7 +68,7 @@ export const CellAction = ( {
       <AlertModal
         isOpen={ open }
         onClose={ () => setOpen( false ) }
-        onConfirm={ () => handleDeleteBillboard() }
+        onConfirm={ () => handleDeleteCategory() }
         loading={ loading }
       />
       <DropdownMenu>
@@ -85,7 +85,7 @@ export const CellAction = ( {
             Copy ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={ () => handleUpdateBillboard() }>
+          <DropdownMenuItem onClick={ () => handleUpdateCategory() }>
             <PenBox className="w-4 h-4 mr-2" />
             Update
           </DropdownMenuItem>

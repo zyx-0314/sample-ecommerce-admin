@@ -5,11 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
-import { Separator } from "@/components/ui/separator";
-import { WarningSign } from "@/components/ui/warning-sign";
-import { BillboardColumn, columnsBillboardDef } from "@/components/non-reusable/billboard/columns";
-import { DataTable } from "@/components/ui/data-table";
 import { ApiList } from "@/components/ui/api-list";
+import { Separator } from "@/components/ui/separator";
+import { DataTable } from "@/components/ui/data-table";
+import { BillboardColumn, columnsBillboardDef } from "@/components/non-reusable/billboard/columns";
 
 interface BillboardViewProps
 {
@@ -38,6 +37,7 @@ export const BillboardView = ( { data }: BillboardViewProps ) =>
       </div>
       <Separator />
       <DataTable
+        searchKey="label"
         columns={ columnsBillboardDef }
         data={ data }
       />
