@@ -44,7 +44,7 @@ export const SettingsForm = ( { initialData }: SettingsFormProps ) =>
   const [ loading, setLoading ] = useState( false )
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
+  const { origin } = useOrigin()
 
   const form = useForm<SettingsFormValues>( {
     resolver: zodResolver( formSchema ),
@@ -85,7 +85,7 @@ export const SettingsForm = ( { initialData }: SettingsFormProps ) =>
         } )
         .catch( ( error ) => toast.error( error.response.data ) )
     }
-    catch ( error ) { toast.error( "Make sure you disable/remove all all products and categories first" ) }
+    catch ( error ) { toast.error( "Make sure you disable/remove all  products and all categories first" ) }
     finally
     {
       setOpen( false )
