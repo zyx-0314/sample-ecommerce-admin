@@ -12,7 +12,7 @@ export async function GET(
 		if (!params.billboardsId)
 			return new NextResponse('Billboard Id is required', { status: 400 });
 
-		const response = await prismadb.billboard.findMany({
+		const response = await prismadb.billboard.findFirst({
 			where: {
 				id: params.billboardsId,
 			},
@@ -20,7 +20,7 @@ export async function GET(
 
 		return NextResponse.json(response);
 	} catch (error) {
-		console.log('[BILLBOARD_POST_ERROR]', error);
+		console.log('[BILLBOARDS_BILLBOARDSID_GET_ERROR]', error);
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }
