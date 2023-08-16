@@ -21,7 +21,7 @@ import
 interface CellActionProps
 {
   data: string
-  table: 'categories' | 'sizes' | 'billboards'
+  table: 'categories' | 'sizes' | 'billboards' | 'colors'
 }
 
 export const CellAction = (
