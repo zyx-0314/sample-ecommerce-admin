@@ -6,16 +6,17 @@ import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CellAction } from "@/components/ui/cell-action"
 
-export type BillboardColumn = {
+export type SizeColumn = {
   id: string
-  label: string
+  name: string,
+  value: string,
   createdAt: string
   updatedAt: string
 }
 
-export const columnsBillboardDef: ColumnDef<BillboardColumn>[] = [
+export const columnsSizeDef: ColumnDef<SizeColumn>[] = [
   {
-    accessorKey: "label",
+    accessorKey: "name",
     header: ( { column } ) =>
     {
       return (
@@ -23,7 +24,22 @@ export const columnsBillboardDef: ColumnDef<BillboardColumn>[] = [
           variant="ghost"
           onClick={ () => column.toggleSorting( column.getIsSorted() === "asc" ) }
         >
-          Label
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: "value",
+    header: ( { column } ) =>
+    {
+      return (
+        <Button
+          variant="ghost"
+          onClick={ () => column.toggleSorting( column.getIsSorted() === "asc" ) }
+        >
+          Value
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -39,6 +55,6 @@ export const columnsBillboardDef: ColumnDef<BillboardColumn>[] = [
   },
   {
     id: "actions",
-    cell: ( { row } ) => <CellAction data={ row.original.id } table="billboards" />
+    cell: ( { row } ) => <CellAction data={ row.original.id } table='sizes' />
   },
 ]

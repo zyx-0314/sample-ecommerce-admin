@@ -1,6 +1,5 @@
 import prismadb from "@/lib/prismadb"
 
-import { BillboardForm } from "@/components/non-reusable/billboard/billboard-form"
 import { CategoryForm } from "@/components/non-reusable/category/category-form"
 
 interface CategoryPageProps
@@ -11,7 +10,7 @@ interface CategoryPageProps
   }
 }
 
-export default async function FormBillboardPage (
+export default async function FormCategoryPage (
   { params: {
     storeId,
     categoryId

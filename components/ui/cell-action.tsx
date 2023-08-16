@@ -8,7 +8,6 @@ import { CopyCheck, MoreHorizontal, PenBox, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { AlertModal } from "@/components/modals/alert-modal"
-import { CategoryColumn } from "@/components/non-reusable/category/columns"
 import
 {
   DropdownMenu,
@@ -21,36 +20,37 @@ import
 
 interface CellActionProps
 {
-  data: CategoryColumn
+  data: string
+  table: 'categories' | 'sizes' | 'billboards'
 }
 
-export const CellAction = ( {
-  data
-}: CellActionProps ) =>
+export const CellAction = (
+  { data, table }: CellActionProps ) =>
 {
   const router = useRouter()
   const params = useParams()
   const [ loading, setLoading ] = useState( false )
   const [ open, setOpen ] = useState( false )
 
-  const handleUpdateCategory = () => router.push( `/${ params.storeId }/categories/${ data.id }` )
+  const handleUpdateSize = () => router.push( `/${ params.storeId }/${ table }/${ data }` )
 
-  const handleDeleteCategory = async () =>
+  const handleDeleteSize = async () =>
   {
     setLoading( true )
     try
     {
       await axios
-        .delete( `/api/${ params.storeId }/categories/${ data.id }` )
+        .delete( `/api/${ params.storeId }/${ table }/${ data }` )
         .then( () =>
         {
-          toast.success( "Category deleted successfully" )
+          const text = table.slice( 0, 1 ).toUpperCase() + table.slice( 1 ) + ' deleted successfully'
+          toast.success( text )
           router.refresh()
         } )
         .catch( ( error ) => toast.error( `${ error.response.data.message } ${ error.response.data }` ) )
     }
     catch ( error ) { toast.error( "Something went wrong" ) }
-    finally 
+    finally
     {
       setOpen( false )
       setLoading( false )
@@ -59,7 +59,7 @@ export const CellAction = ( {
 
   const handleCopy = () =>
   {
-    navigator.clipboard.writeText( data.id )
+    navigator.clipboard.writeText( data )
     toast.success( "Copied to clipboard" )
   }
 
@@ -68,7 +68,7 @@ export const CellAction = ( {
       <AlertModal
         isOpen={ open }
         onClose={ () => setOpen( false ) }
-        onConfirm={ () => handleDeleteCategory() }
+        onConfirm={ () => handleDeleteSize() }
         loading={ loading }
       />
       <DropdownMenu>
@@ -85,7 +85,7 @@ export const CellAction = ( {
             Copy ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={ () => handleUpdateCategory() }>
+          <DropdownMenuItem onClick={ () => handleUpdateSize() }>
             <PenBox className="w-4 h-4 mr-2" />
             Update
           </DropdownMenuItem>

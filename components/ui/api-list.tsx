@@ -31,7 +31,7 @@ export const ApiList = ( {
       <ApiAlert
         title="GET"
         variant='public'
-        description={ `${ baseUrl }/${ entityName }/{${ entityIdName } }` }
+        description={ `${ baseUrl }/${ entityName }/{${ entityIdName }}` }
       />
       <ApiAlert
         title="POST"

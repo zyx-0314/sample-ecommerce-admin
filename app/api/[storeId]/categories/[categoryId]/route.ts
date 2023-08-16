@@ -88,7 +88,6 @@ export async function PATCH(
 
 		return NextResponse.json(response);
 	} catch (error) {
-		console.log('[CATEGORIES_CATEGORYID_PATCH_ERROR]', error);
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }

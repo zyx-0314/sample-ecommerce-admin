@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { CellAction } from "@/components/non-reusable/category/cell-action"
+import { CellAction } from "@/components/ui/cell-action"
 
 export type CategoryColumn = {
   id: string
@@ -45,6 +45,6 @@ export const columnsCategoryDef: ColumnDef<CategoryColumn>[] = [
   },
   {
     id: "actions",
-    cell: ( { row } ) => <CellAction data={ row.original } />
+    cell: ( { row } ) => <CellAction data={ row.original.id } table='categories' />
   },
 ]
