@@ -37,7 +37,7 @@ export const ColorView = ( { data }: ColorViewProps ) =>
       </div>
       <Separator />
       <DataTable
-        searchKey="label"
+        searchKey="name"
         columns={ columnsColorsDef }
         data={ data }
       />

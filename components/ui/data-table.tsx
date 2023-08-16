@@ -77,7 +77,9 @@ export function DataTable<TData, TValue> ( {
           placeholder="Search..."
           value={ ( table.getColumn( searchKey )?.getFilterValue() as string ) ?? "" }
           onChange={ ( event ) =>
+          {
             table.getColumn( searchKey )?.setFilterValue( event.target.value )
+          }
           }
           className="max-w-sm"
         />
@@ -119,7 +121,7 @@ export function DataTable<TData, TValue> ( {
                 { headerGroup.headers.map( ( header ) =>
                 {
                   return (
-                    <TableHead key={ header.id }>
+                    <TableHead key={ header.id } id='label'>
                       { header.isPlaceholder
                         ? null
                         : flexRender(
