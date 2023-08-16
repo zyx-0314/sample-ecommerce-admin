@@ -8,7 +8,7 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { ApiList } from "@/components/ui/api-list";
-import { CategoryColumn, columnsCategoryDef } from "./columns";
+import { CategoryColumn, columnsCategoryDef } from "@/components/non-reusable/category/columns";
 
 interface CategoryViewProps
 {
