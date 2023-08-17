@@ -21,12 +21,14 @@ import
 {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface ProductFormProps
 {
@@ -339,6 +341,50 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
                   </FormItem>
                 )
               } }
+            />
+            <FormField
+              control={ form.control }
+              name='isFeatured'
+              render={ ( { field } ) =>
+              (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      disabled={ loading }
+                      checked={ field.value }
+                      onCheckedChange={ field.onChange }
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Featured</FormLabel>
+                    <FormDescription>
+                      Featured products will be displayed on the home page
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              ) }
+            />
+            <FormField
+              control={ form.control }
+              name='isArchived'
+              render={ ( { field } ) =>
+              (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      disabled={ loading }
+                      checked={ field.value }
+                      onCheckedChange={ field.onChange }
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Archive</FormLabel>
+                    <FormDescription>
+                      Archived products will not be displayed on the store
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              ) }
             />
           </div>
           <Button disabled={ loading } className="ml-auto" type="submit">
