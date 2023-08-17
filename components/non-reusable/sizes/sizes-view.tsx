@@ -20,7 +20,7 @@ export const SizeView = ( { data }: SizeViewProps ) =>
   const router = useRouter()
   const params = useParams()
 
-  const handleAddNewBillboard = () => router.push( `/${ params.storeId }/sizes/new` )
+  const handleAddNewColors = () => router.push( `/${ params.storeId }/sizes/new` )
 
   return (
     <>
@@ -29,7 +29,7 @@ export const SizeView = ( { data }: SizeViewProps ) =>
           title={ `Sizes (${ data.length })` }
           description="Manage your sizes"
         />
-        <Button onClick={ () => handleAddNewBillboard() }>
+        <Button onClick={ () => handleAddNewColors() }>
           <Plus className="mr-2 w-4 h-4" />
           Add New
         </Button>
@@ -37,7 +37,7 @@ export const SizeView = ( { data }: SizeViewProps ) =>
       </div>
       <Separator />
       <DataTable
-        searchKey="label"
+        searchKey="name"
         columns={ columnsSizeDef }
         data={ data }
       />

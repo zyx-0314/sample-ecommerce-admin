@@ -5,6 +5,7 @@ import { ArrowUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CellAction } from "@/components/ui/cell-action"
+import { formattedHeader } from "@/components/ui/table-header"
 
 export type BillboardColumn = {
   id: string
@@ -16,18 +17,11 @@ export type BillboardColumn = {
 export const columnsBillboardDef: ColumnDef<BillboardColumn>[] = [
   {
     accessorKey: "label",
-    header: ( { column } ) =>
-    {
-      return (
-        <Button
-          variant="ghost"
-          onClick={ () => column.toggleSorting( column.getIsSorted() === "asc" ) }
-        >
-          Label
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ( { column } ) => formattedHeader( {
+      column,
+      title: "label",
+      hasSort: true,
+    } ),
   },
   {
     accessorKey: "createdAt",
