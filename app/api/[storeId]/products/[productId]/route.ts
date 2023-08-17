@@ -71,6 +71,7 @@ export async function PATCH(
 
 		if (!params.storeId)
 			return new NextResponse('Store Id Required', { status: 401 });
+
 		if (!params.productId)
 			return new NextResponse('Produtc Id Required', { status: 401 });
 

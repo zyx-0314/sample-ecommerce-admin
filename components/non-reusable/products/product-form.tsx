@@ -90,7 +90,7 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
       if ( initialData )
       {
         await axios
-          .patch( `/api/${ params.storeId }/products/${ params.productId }`, values )
+          .patch( `/api/${ params.storeId }/products/${ params.productsId }`, values )
           .then( () =>
           {
             toast.success( toastMessage )
