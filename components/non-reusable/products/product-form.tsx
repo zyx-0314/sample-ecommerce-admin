@@ -90,7 +90,7 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
       if ( initialData )
       {
         await axios
-          .patch( `/api/${ params.storeId }/products/${ params.billboardId }`, values )
+          .patch( `/api/${ params.storeId }/products/${ params.productId }`, values )
           .then( () =>
           {
             toast.success( toastMessage )
@@ -124,16 +124,16 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
     {
       setLoading( true )
       await axios
-        .delete( `/api/${ params.storeId }/products/${ params.billboardId }` )
+        .delete( `/api/${ params.storeId }/products/${ params.productId }` )
         .then( () =>
         {
-          toast.success( "Billboard deleted successfully" )
+          toast.success( "Product deleted successfully" )
           router.refresh()
           router.push( `/${ params.storeId }/products` )
         } )
         .catch( ( error ) => toast.error( error.response.data ) )
     }
-    catch ( error ) { toast.error( "Make sure you disable/remove all categories using this bllboard first" ) }
+    catch ( error ) { toast.error( "Something went wrong" ) }
     finally
     {
       setOpen( false )
