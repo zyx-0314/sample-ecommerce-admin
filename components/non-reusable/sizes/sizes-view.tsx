@@ -9,6 +9,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { SizeColumn, columnsSizeDef } from "@/components/non-reusable/sizes/columns";
+import { useEffect, useState } from "react";
 
 interface SizeViewProps
 {
@@ -17,6 +18,12 @@ interface SizeViewProps
 
 export const SizeView = ( { data }: SizeViewProps ) =>
 {
+  const [ isMounted, setIsMounted ] = useState( false )
+
+  useEffect( () => setIsMounted( true ), [] )
+
+  if ( !isMounted ) return null
+
   const router = useRouter()
   const params = useParams()
 
