@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { ProductColumn, columnsProductDef, filterSetter } from "@/components/non-reusable/products/columns";
-import { useEffect, useState } from "react";
 
 interface ProductViewProps
 {
@@ -22,13 +22,13 @@ interface ProductViewProps
 export const ProductView = ( { data, categories, sizes, colors }: ProductViewProps ) =>
 {
   const [ isMounted, setIsMounted ] = useState( false )
+  const router = useRouter()
+  const params = useParams()
 
   useEffect( () => setIsMounted( true ), [] )
 
   if ( !isMounted ) return null
 
-  const router = useRouter()
-  const params = useParams()
   filterSetter( {
     size: sizes.map( item => item.name ),
     color: colors.map( item => item.name ),
