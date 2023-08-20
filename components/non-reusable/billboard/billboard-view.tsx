@@ -9,6 +9,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { BillboardColumn, columnsBillboardDef } from "@/components/non-reusable/billboard/columns";
+import { useEffect, useState } from "react";
 
 interface BillboardViewProps
 {
@@ -17,6 +18,12 @@ interface BillboardViewProps
 
 export const BillboardView = ( { data }: BillboardViewProps ) =>
 {
+  const [ isMounted, setIsMounted ] = useState( false )
+
+  useEffect( () => setIsMounted( true ), [] )
+
+  if ( !isMounted ) return null
+
   const router = useRouter()
   const params = useParams()
 

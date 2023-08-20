@@ -9,6 +9,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { ColorsColumn, columnsColorsDef } from "@/components/non-reusable/colors/columns";
+import { useEffect, useState } from "react";
 
 interface ColorViewProps
 {
@@ -17,6 +18,12 @@ interface ColorViewProps
 
 export const ColorView = ( { data }: ColorViewProps ) =>
 {
+  const [ isMounted, setIsMounted ] = useState( false )
+
+  useEffect( () => setIsMounted( true ), [] )
+
+  if ( !isMounted ) return null
+
   const router = useRouter()
   const params = useParams()
 

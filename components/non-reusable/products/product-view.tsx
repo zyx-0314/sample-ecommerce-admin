@@ -9,6 +9,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { ProductColumn, columnsProductDef, filterSetter } from "@/components/non-reusable/products/columns";
+import { useEffect, useState } from "react";
 
 interface ProductViewProps
 {
@@ -20,6 +21,12 @@ interface ProductViewProps
 
 export const ProductView = ( { data, categories, sizes, colors }: ProductViewProps ) =>
 {
+  const [ isMounted, setIsMounted ] = useState( false )
+
+  useEffect( () => setIsMounted( true ), [] )
+
+  if ( !isMounted ) return null
+
   const router = useRouter()
   const params = useParams()
   filterSetter( {
