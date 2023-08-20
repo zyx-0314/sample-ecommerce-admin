@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { BillboardColumn, columnsBillboardDef } from "@/components/non-reusable/billboard/columns";
-import { useEffect, useState } from "react";
 
 interface BillboardViewProps
 {
@@ -18,14 +18,15 @@ interface BillboardViewProps
 
 export const BillboardView = ( { data }: BillboardViewProps ) =>
 {
+  const router = useRouter()
+  const params = useParams()
+
   const [ isMounted, setIsMounted ] = useState( false )
 
   useEffect( () => setIsMounted( true ), [] )
 
   if ( !isMounted ) return null
 
-  const router = useRouter()
-  const params = useParams()
 
   const handleAddNewBillboard = () => router.push( `/${ params.storeId }/billboards/new` )
 
