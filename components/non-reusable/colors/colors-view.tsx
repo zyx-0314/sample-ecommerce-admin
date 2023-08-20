@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { ApiList } from "@/components/ui/api-list";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { ColorsColumn, columnsColorsDef } from "@/components/non-reusable/colors/columns";
-import { useEffect, useState } from "react";
 
 interface ColorViewProps
 {
@@ -19,13 +19,12 @@ interface ColorViewProps
 export const ColorView = ( { data }: ColorViewProps ) =>
 {
   const [ isMounted, setIsMounted ] = useState( false )
+  const router = useRouter()
+  const params = useParams()
 
   useEffect( () => setIsMounted( true ), [] )
 
   if ( !isMounted ) return null
-
-  const router = useRouter()
-  const params = useParams()
 
   const handleAddNewColors = () => router.push( `/${ params.storeId }/colors/new` )
 

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: http://https://ian-cedric-ramirez.vercel.app/sitemap.xml
