@@ -1,3 +1,4 @@
+import { Category } from '@prisma/client';
 import { auth } from '@clerk/nextjs';
 import prismadb from '@/lib/prismadb';
 import { NextResponse } from 'next/server';
@@ -15,6 +16,9 @@ export async function GET(
 		const response = await prismadb.category.findFirst({
 			where: {
 				id: params.categoryId,
+			},
+			include: {
+				billboard: true,
 			},
 		});
 

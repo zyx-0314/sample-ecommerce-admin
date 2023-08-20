@@ -144,7 +144,6 @@ export async function DELETE(
 	request: Request,
 	{ params }: { params: { storeId: string; productId: string } }
 ) {
-	console.log('[PRODUCTS_PRODUCTID_DELETE]', params);
 	try {
 		const { userId } = auth();
 		if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
@@ -163,6 +162,17 @@ export async function DELETE(
 
 		if (!productExist)
 			return new NextResponse('Product not found', { status: 404 });
+
+		const productInOrderItem = await prismadb.orderItem.findFirst({
+			where: {
+				productId: params.productId,
+			},
+		});
+
+		console.log
+
+		if (productInOrderItem)
+			return new NextResponse('Product in use', { status: 403 });
 
 		const storeByUserId = await prismadb.store.findFirst({
 			where: {
