@@ -9,7 +9,6 @@ export default async function ProductPage (
   { params: { storeId } }: { params: { storeId: string } }
 )
 {
-  //from prismadb in category table, find many where storeId is equal to storeId and return list of names
   const categories = await prismadb.category.findMany( {
     where: {
       storeId

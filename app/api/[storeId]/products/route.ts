@@ -24,7 +24,11 @@ export async function POST(
 
 		if (!name) return new NextResponse('Name is required', { status: 400 });
 
-		if (!price) return new NextResponse('Value is required', { status: 400 });
+		if (!images || !images.length) {
+			return new NextResponse('Image/s is required', { status: 400 });
+		}
+
+		if (!price) return new NextResponse('Price is required', { status: 400 });
 
 		if (!categoryId)
 			return new NextResponse('Category is required', { status: 400 });
@@ -56,6 +60,11 @@ export async function POST(
 				colorId,
 				isArchived,
 				isFeatured,
+				images: {
+					createMany: {
+						data: [...images.map((image: string) => image)],
+					},
+				},
 			},
 		});
 
@@ -71,12 +80,32 @@ export async function GET(
 	{ params }: { params: { storeId: string } }
 ) {
 	try {
+		const { searchParams } = new URL(request.url);
+		const categoryId = searchParams.get('categoryId') || undefined;
+		const sizeId = searchParams.get('sizeId') || undefined;
+		const colorId = searchParams.get('colorId') || undefined;
+		const isFeatured = searchParams.get('isFeatured');
+
 		if (!params.storeId)
 			return new NextResponse('Store Id is required', { status: 400 });
 
-		const response = await prismadb.color.findMany({
+		const response = await prismadb.product.findMany({
 			where: {
 				storeId: params.storeId,
+				categoryId,
+				sizeId,
+				colorId,
+				isFeatured: isFeatured === 'true' ? true : undefined,
+				isArchived: false,
+			},
+			include: {
+				images: true,
+				category: true,
+				size: true,
+				color: true,
+			},
+			orderBy: {
+				createdAt: 'desc',
 			},
 		});
 

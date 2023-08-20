@@ -95,7 +95,7 @@ export const columnsProductDef: ColumnDef<ProductColumn>[] = [
     cell: ( { row } ) =>
       <div className="flex items-center gap-x-2">
         <div
-          className="w-6 h-6 rounded-full"
+          className="w-6 h-6 rounded-full border-black border"
           style={ { backgroundColor: row.original.color } }
         />
         { row.original.color }

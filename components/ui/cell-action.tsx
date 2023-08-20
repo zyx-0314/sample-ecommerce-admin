@@ -34,7 +34,7 @@ export const CellAction = (
 
   const handleUpdateSize = () => router.push( `/${ params.storeId }/${ table }/${ data }` )
 
-  const handleDeleteSize = async () =>
+  const handleDelete = async () =>
   {
     setLoading( true )
     try
@@ -47,7 +47,7 @@ export const CellAction = (
           toast.success( text )
           router.refresh()
         } )
-        .catch( ( error ) => toast.error( `${ error.response.data.message } ${ error.response.data }` ) )
+        .catch( ( error ) => toast.error( `${ error.response.data }` ) )
     }
     catch ( error ) { toast.error( "Something went wrong" ) }
     finally
@@ -68,7 +68,7 @@ export const CellAction = (
       <AlertModal
         isOpen={ open }
         onClose={ () => setOpen( false ) }
-        onConfirm={ () => handleDeleteSize() }
+        onConfirm={ () => handleDelete() }
         loading={ loading }
       />
       <DropdownMenu>

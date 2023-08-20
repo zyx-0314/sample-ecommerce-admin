@@ -32,11 +32,11 @@ export const columnsColorsDef: ColumnDef<ColorsColumn>[] = [
       hasSort: true,
     } ),
     cell: ( { row } ) => <div className="flex items-center gap-x-2">
-      { row.original.value }
       <div
-        className="w-6 h-6 rounded-full"
+        className="w-6 h-6 rounded-full border border-black"
         style={ { backgroundColor: row.original.value } }
       />
+      { row.original.value }
     </div>
   },
   {

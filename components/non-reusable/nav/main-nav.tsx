@@ -20,6 +20,11 @@ export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLEleme
       active: pathname === `/${ params.storeId }/products`
     },
     {
+      href: `/${ params.storeId }/orders`,
+      label: 'Orders',
+      active: pathname === `/${ params.storeId }/orders`
+    },
+    {
       href: `/${ params.storeId }/billboards`,
       label: 'Billboards',
       active: pathname === `/${ params.storeId }/billboards`
@@ -52,7 +57,8 @@ export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLEleme
     >
       { routes.map( ( { href, label, active } ) => (
         <Link
-          key={ href } href={ href } className={ cn( 'text-sm font-medium transition-colors', active ? 'text-black dark:text-white' : 'text-gray-500 hover:text-primary' ) }
+          key={ href } href={ href }
+          className={ cn( 'text-sm font-medium transition-colors', active ? 'text-black dark:text-white' : 'text-gray-500 hover:text-primary' ) }
         >
           { label }
         </Link>
