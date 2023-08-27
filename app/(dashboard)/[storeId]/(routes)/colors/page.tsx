@@ -1,8 +1,8 @@
-import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 
-import { ColorView } from "@/components/non-reusable/colors/colors-view";
+import prismadb from "@/lib/prismadb";
 import { ColorsColumn } from "@/components/non-reusable/colors/columns";
+import { ColorView } from "@/components/non-reusable/colors/colors-view";
 
 export default async function ColorPage (
   { params: { storeId } }: { params: { storeId: string } }

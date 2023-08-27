@@ -2,21 +2,30 @@
 
 import * as z from "zod"
 import axios from "axios"
-import { useState } from "react"
-import { Trash } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { useForm } from "react-hook-form"
-import { Category, Image, Color, Size, Product } from "@prisma/client"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams, useRouter } from "next/navigation"
+import { CheckSquare, Square, Trash } from "lucide-react"
+import { Category, Image, Color, Product } from "@prisma/client"
 
 import { Input } from "@/components/ui/input"
-import { useOrigin } from "@/hooks/use-origin"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
+import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { AlertModal } from "@/components/modals/alert-modal"
+import FacetSelection from "@/components/ui/facet-selection"
+import
+{
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import
 {
   Form,
@@ -27,8 +36,6 @@ import
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 
 interface ProductFormProps
 {
@@ -36,8 +43,8 @@ interface ProductFormProps
     images: Image[]
   } | null
   categories: Category[]
-  sizes: Size[]
   colors: Color[]
+  duplicate?: boolean
 }
 
 const formSchema = z.object( {
@@ -45,49 +52,89 @@ const formSchema = z.object( {
   images: z.object( { url: z.string() } ).array(),
   price: z.coerce.number().min( 1 ),
   categoryId: z.string().min( 1 ),
-  sizeId: z.string().min( 1 ),
-  colorId: z.string().min( 1 ),
+  color: z.string().default( ' ' ),
+  size: z.string().default( ' ' ),
+  subName: z.string().default( ' ' ).optional().nullable(),
   isArchived: z.boolean().default( false ).optional(),
   isFeatured: z.boolean().default( false ).optional(),
+  stock: z.coerce.number().min( 1 ),
+  details: z.string().max( 5000 ).default( ' ' ).optional(),
 } )
 
 type ProductFormValues = z.infer<typeof formSchema>
 
-export const ProductForm = ( { initialData, categories, colors, sizes }: ProductFormProps ) =>
+export const ProductForm = ( { initialData, categories, colors, duplicate }: ProductFormProps ) =>
 {
   const [ open, setOpen ] = useState( false )
   const [ loading, setLoading ] = useState( false )
+  const [ selectedColorsIdValue, setSelectedColorsIdValue ] = useState<{ id: string, value: string }[]>( [] )
+  const [ another, setAnother ] = useState( false )
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
-  const title = initialData ? "Edit Product" : "New Product"
-  const description = initialData ? "Edit a Product" : "Add a New Product"
-  const toastMessage = initialData ? "Product updated successfully" : "Product created successfully"
-  const action = initialData ? "Update" : "Create"
+  const title = initialData
+    ? duplicate
+      ? "Duplicate Product"
+      : "Edit Product"
+    : "New Product"
+  const description = initialData && !duplicate
+    ? "Edit a Product"
+    : "Add a New Product"
+  const toastMessage = initialData && !duplicate ? "Product updated successfully" : "Product created successfully"
+  const action = initialData && !duplicate ? "Update" : "Create"
+  const secondaryAction = initialData ? "Add New Color" : "Submit Another"
+
+  // Check if there is existing category/ies, color/s to select from
+  useEffect( () =>
+  {
+    if ( categories.length === 0 || colors.length === 0 )
+    {
+      const missing = categories.length === 0 ? 'Categories' : 'Colors'
+      router.push( `/${ params.storeId }/${ missing.toLocaleLowerCase() }` )
+      router.refresh()
+      toast.error( `No ${ missing } Yet` )
+    }
+
+  }, [ categories ] )
+
+  // convert color id to color value
+  useEffect( () =>
+  {
+    setSelectedColorsIdValue( initialData?.color?.split( ',' ).map( ( color ) =>
+    {
+      const value = colors.find( ( { id } ) => id === color )?.value
+      return { id: color, value: value || color }
+    } ) || [] )
+  }, [ initialData ] )
 
   const form = useForm<ProductFormValues>( {
     resolver: zodResolver( formSchema ),
-    defaultValues: initialData ? {
-      ...initialData,
-      price: parseFloat( initialData?.price.toString() ),
-    } : {
-      name: "",
-      images: [],
-      price: 0,
-      categoryId: "",
-      isFeatured: false,
-      isArchived: false,
-      sizeId: "",
-      colorId: "",
-    },
+    defaultValues: initialData
+      ? {
+        ...initialData,
+        price: parseFloat( initialData?.price.toString() ),
+      }
+      : {
+        subName: "",
+        name: "",
+        images: [],
+        price: 0.00,
+        categoryId: "",
+        isFeatured: false,
+        isArchived: false,
+        // sizeId: "",
+        // colorId: "",
+        stock: 0,
+      },
   } )
 
   const handleSubmit = async ( values: ProductFormValues ) =>
   {
+    values.color = selectedColorsIdValue.map( ( { id } ) => id ).join( ',' )
+
     try
     {
       setLoading( true )
-      if ( initialData )
+      if ( initialData && !duplicate )
       {
         await axios
           .patch( `/api/${ params.storeId }/products/${ params.productsId }`, values )
@@ -95,10 +142,16 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
           {
             toast.success( toastMessage )
             router.refresh()
-            router.push( `/${ params.storeId }/products` )
+            if ( another ) router.push( `/${ params.storeId }/products/new` )
+            else router.push( `/${ params.storeId }/products` )
           } )
           .catch( ( error ) => toast.error( error.response.data ) )
-          .finally( () => setLoading( false ) )
+          .finally( () =>
+          {
+            setLoading( false )
+            setAnother( false )
+            if ( another ) window.location.reload();
+          } )
       }
       else
       {
@@ -108,10 +161,16 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
           {
             toast.success( toastMessage )
             router.refresh()
-            router.push( `/${ params.storeId }/products` )
+            if ( another ) router.push( `/${ params.storeId }/products/new` )
+            else router.push( `/${ params.storeId }/products` )
           } )
           .catch( ( error ) => toast.error( error.response.data ) )
-          .finally( () => setLoading( false ) )
+          .finally( () =>
+          {
+            setLoading( false )
+            setAnother( false )
+            if ( another ) window.location.reload();
+          } )
       }
 
     }
@@ -140,15 +199,27 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
     }
   }
 
+  const handleSelectedColorId = ( value: string, colorId: string ) =>
+  {
+    if ( value === 'reset' )
+      setSelectedColorsIdValue( [] )
+    else if ( selectedColorsIdValue.find( ( { id } ) => id === colorId ) )
+      setSelectedColorsIdValue( selectedColorsIdValue.filter( ( { id } ) => id !== colorId ) )
+    else
+      setSelectedColorsIdValue( [ ...selectedColorsIdValue, { id: colorId, value } ] )
+  }
 
   return (
     <>
+      {/* Alert Modal */ }
       <AlertModal
         isOpen={ open }
         onClose={ () => setOpen( false ) }
         onConfirm={ handleDelete }
         loading={ loading }
       />
+
+      {/* Section Page Header */ }
       <div className="flex items-center justify-between">
         <Heading
           title={ title }
@@ -165,9 +236,12 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
           </Button>
         ) }
       </div>
+
       <Separator />
+
       <Form { ...form }>
         <form onSubmit={ form.handleSubmit( handleSubmit ) } className="space-y-8 w-full">
+          {/* Image Input */ }
           <FormField
             control={ form.control }
             name="images"
@@ -190,7 +264,9 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
               )
             } }
           />
-          <div className="grid grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-3 gap-8 sm:grid-cols-2">
+            {/* Product Name - Text Input */ }
             <FormField
               control={ form.control }
               name="name"
@@ -208,23 +284,29 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
                 )
               } }
             />
+
+            {/* Product SubName - Text Input */ }
             <FormField
               control={ form.control }
-              name="price"
+              name="subName"
               render={ ( { field } ) =>
               {
                 return (
                   <FormItem
                   >
-                    <FormLabel>Price (PHP)</FormLabel>
+                    <FormLabel>Product Sub-Name</FormLabel>
                     <FormControl>
-                      <Input type="number" disabled={ loading } placeholder="9.99" { ...field } />
+                      <Input disabled={ loading } placeholder="Product Name" value={ field.value ? field.value : '' } onChange={ ( e ) => field.onChange( e.target.value ) } />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )
               } }
             />
+          </div>
+
+          <div className="grid grid-cols-4 gap-8 sm:grid-cols-3">
+            {/* Product Category - Select Input */ }
             <FormField
               control={ form.control }
               name="categoryId"
@@ -242,7 +324,7 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
                         <SelectTrigger>
                           <SelectValue
                             defaultValue={ field.value }
-                            placeholder="Select a category"
+                            placeholder="Select a Category"
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -262,98 +344,150 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
                 )
               } }
             />
+
+            {/* Product Color tags - Check Box */ }
             <FormField
               control={ form.control }
-              name="colorId"
+              name="color"
               render={ ( { field } ) =>
               {
                 return (
                   <FormItem
                   >
                     <FormLabel>Color</FormLabel>
-                    <Select
-                      disabled={ loading } onValueChange={ field.onChange }
-                      value={ field.value } defaultValue={ field.value }
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            defaultValue={ field.value }
-                            placeholder="Select a color"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        { colors.map( ( color ) => (
-                          <SelectItem
-                            key={ color.id }
-                            value={ color.id }
-                          >
-                            <div className="flex items-center gap-x-2">
-                              <div
-                                className="w-6 h-6 rounded-full"
-                                style={ { backgroundColor: color.name } }
-                              />
-                              { color.name }
-                            </div>
-                          </SelectItem>
-                        ) ) }
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <FacetSelection
+                        data={ colors }
+                        selectedData={ selectedColorsIdValue }
+                        onChange={ handleSelectedColorId }
+                        disable={ loading }
+                        isColor
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )
               } }
             />
+
+            {/* Product Size -Text Area */ }
             <FormField
               control={ form.control }
-              name="sizeId"
+              name="size"
               render={ ( { field } ) =>
               {
                 return (
                   <FormItem
                   >
-                    <FormLabel>Size</FormLabel>
-                    <Select
-                      disabled={ loading } onValueChange={ field.onChange }
-                      value={ field.value } defaultValue={ field.value }
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            defaultValue={ field.value }
-                            placeholder="Select a size"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        { sizes.map( ( size ) => (
-                          <SelectItem
-                            key={ size.id }
-                            value={ size.id }
-                          >
-                            { size.name } - { size.value }
-                          </SelectItem>
-                        ) ) }
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Size <span className="italic font-thin text-xs">use , as seperations</span></FormLabel>
+                    <FormControl>
+                      <Input disabled={ loading } placeholder="S, M, L, XL" { ...field } />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )
               } }
             />
+          </div>
+
+          <div className="grid grid-cols-1">
+            {/* Product Description - Text Area */ }
+            <FormField
+              control={ form.control }
+              name="details"
+              render={ ( { field } ) =>
+              {
+                return (
+                  <FormItem
+                  >
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <>
+                        <Textarea
+                          placeholder="Product Description"
+                          id="description"
+                          value={ field.value || '' }
+                          onChange={ ( e ) =>
+                          {
+                            if ( e.target.value.length <= 5000 )
+                              field.onChange( e.target.value )
+                          }
+                          }
+                          disabled={ loading }
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          A Short Description of product with max 5000 characters. { field.value?.length || 0 } / 5000
+                        </p>
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              } }
+            />
+          </div>
+
+          <div className="grid grid-cols-4 gap-8 sm:grid-cols-3">
+            {/* Product Price - Number Input */ }
+            <FormField
+              control={ form.control }
+              name="price"
+              render={ ( { field } ) =>
+              {
+                return (
+                  <FormItem
+                  >
+                    <FormLabel>Price (PHP)</FormLabel>
+                    <FormControl>
+                      <Input type="number" disabled={ loading } placeholder="9.99" { ...field } step='.25' />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              } }
+            />
+
+            {/* Product Stock - Number Input */ }
+            <FormField
+              control={ form.control }
+              name="stock"
+              render={ ( { field } ) =>
+              {
+                return (
+                  <FormItem
+                  >
+                    <FormLabel>Stock</FormLabel>
+                    <FormControl>
+                      <Input type="number" disabled={ loading } placeholder="10" { ...field } />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              } }
+            />
+
+          </div>
+
+          <div className="grid grid-cols-4 gap-8 sm:grid-cols-3">
+            {/* Featured Checkbox */ }
             <FormField
               control={ form.control }
               name='isFeatured'
               render={ ( { field } ) =>
               (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem
+                  className={ `flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 transition-all ${ loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-900' }` }
+                  onClick={ () =>
+                  {
+                    if ( !loading )
+                      field.onChange( !field.value )
+                  } }
+                >
                   <FormControl>
-                    <Checkbox
-                      disabled={ loading }
-                      checked={ field.value }
-                      onCheckedChange={ field.onChange }
-                    />
+                    { field.value
+                      ? <CheckSquare className="h-6 w-6" />
+                      : <Square className="h-6 w-6" />
+                    }
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Featured</FormLabel>
@@ -364,18 +498,26 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
                 </FormItem>
               ) }
             />
+
+            {/* Archive Checkbox */ }
             <FormField
               control={ form.control }
               name='isArchived'
               render={ ( { field } ) =>
               (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem
+                  className={ `flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 transition-all ${ loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-900' }` }
+                  onClick={ () =>
+                  {
+                    if ( !loading )
+                      field.onChange( !field.value )
+                  } }
+                >
                   <FormControl>
-                    <Checkbox
-                      disabled={ loading }
-                      checked={ field.value }
-                      onCheckedChange={ field.onChange }
-                    />
+                    { field.value
+                      ? <CheckSquare className="h-6 w-6" />
+                      : <Square className="h-6 w-6" />
+                    }
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Archive</FormLabel>
@@ -387,10 +529,22 @@ export const ProductForm = ( { initialData, categories, colors, sizes }: Product
               ) }
             />
           </div>
-          <Button disabled={ loading } className="ml-auto" type="submit">
-            { action }
-          </Button>
-          <Separator />
+
+          <div className="w-full flex flex-row items-center justify-end space-x-4">
+            <div className="flex gap-x-2">
+              <Button
+                disabled={ loading }
+                variant='secondary'
+                type="submit"
+                onClick={ () => setAnother( true ) }
+              >
+                { secondaryAction }
+              </Button>
+              <Button disabled={ loading } className="ml-auto" type="submit">
+                { action }
+              </Button>
+            </div>
+          </div>
         </form>
       </Form>
     </>

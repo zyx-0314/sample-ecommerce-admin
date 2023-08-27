@@ -1,8 +1,8 @@
 'use client'
-import React from 'react'
-import PropTypes from 'prop-types'
-import Link from 'next/link'
 
+import React from 'react'
+import Link from 'next/link'
+import PropTypes from 'prop-types'
 
 interface errorProps
 {
@@ -15,7 +15,7 @@ const error = ( { error, reset }: errorProps ) =>
 
   return (
     <main className="grid min-h-full place-items-center px-6 py24 sm:py-32 lg:px-8 bg-gray-900">
-      <div className="text-center">
+      <div className="text-center h-[100vh]">
         <p className="text-base font-semibold text-green-700 dark:text-green-500">
           There was a problem
         </p>

@@ -1,15 +1,20 @@
 'use client'
 
-import { formatter } from '@/lib/utils'
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+
+import { formatter } from '@/lib/utils'
 
 interface OverviewProps
 {
-  data: any[]
+  data: {
+    name: string
+    total: number
+  }[]
 }
 
 const Overview = ( { data }: OverviewProps ) =>
 {
+
   return (
     <ResponsiveContainer
       width="100%"

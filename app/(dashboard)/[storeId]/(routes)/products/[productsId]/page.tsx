@@ -8,24 +8,20 @@ interface ProductPageProps
     storeId: string
     productsId: string
   }
+  searchParams: {
+    new: boolean
+  }
 }
-
 
 export default async function FormProductPage (
   { params: {
     storeId,
     productsId
-  } }: ProductPageProps
+  }, searchParams
+  }: ProductPageProps
 )
 {
-
   const categories = await prismadb.category.findMany( {
-    where: {
-      storeId
-    }
-  } )
-
-  const sizes = await prismadb.size.findMany( {
     where: {
       storeId
     }
@@ -52,8 +48,8 @@ export default async function FormProductPage (
         <ProductForm
           initialData={ product }
           categories={ categories }
-          sizes={ sizes }
           colors={ colors }
+          duplicate={ searchParams.new }
         />
       </div>
     </div>

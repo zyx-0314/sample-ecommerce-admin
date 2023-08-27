@@ -1,9 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { CellAction } from "@/components/ui/cell-action"
 import { formattedHeader } from "@/components/ui/table-header"
 
@@ -19,17 +17,25 @@ export const columnsBillboardDef: ColumnDef<BillboardColumn>[] = [
     accessorKey: "label",
     header: ( { column } ) => formattedHeader( {
       column,
-      title: "label",
+      title: "Label",
       hasSort: true,
     } ),
   },
   {
     accessorKey: "createdAt",
-    header: "Creation Date",
+    header: ( { column } ) => formattedHeader( {
+      column,
+      title: "Created At",
+      hasSort: true,
+    } ),
   },
   {
     accessorKey: "updatedAt",
-    header: "Last Updated",
+    header: ( { column } ) => formattedHeader( {
+      column,
+      title: "Last Update",
+      hasSort: true,
+    } ),
   },
   {
     id: "actions",
