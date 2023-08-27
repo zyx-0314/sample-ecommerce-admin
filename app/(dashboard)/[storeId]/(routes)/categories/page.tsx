@@ -1,6 +1,6 @@
-import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 
+import prismadb from "@/lib/prismadb";
 import { CategoryColumn } from "@/components/non-reusable/category/columns";
 import { CategoryView } from "@/components/non-reusable/category/category-view";
 

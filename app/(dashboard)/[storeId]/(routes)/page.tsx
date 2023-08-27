@@ -1,13 +1,14 @@
-import getGraphRevenue from "@/actions/get-graph-revenue";
+import { CandlestickChart, Coins, Layers } from "lucide-react";
+
+import { formatter } from "@/lib/utils";
+import { Heading } from "@/components/ui/heading";
+import { Separator } from "@/components/ui/separator";
 import getSalesCount from "@/actions/get-sales-count";
 import getStockCount from "@/actions/get-stock-count";
 import getTotalRevenue from "@/actions/get-total-revenue";
+import getGraphRevenue from "@/actions/get-graph-revenue";
 import Overview from "@/components/non-reusable/dashboard/overview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heading } from "@/components/ui/heading";
-import { Separator } from "@/components/ui/separator";
-import { formatter } from "@/lib/utils";
-import { CandlestickChart, Coins, Layers } from "lucide-react";
 
 interface DashboardPageProps
 {
@@ -75,12 +76,15 @@ export default async function DashboardPage ( {
           <Card className="col-span-4">
             <CardHeader>
               <CardTitle className="text-sm font-medium">
-                overview
+                Overview
               </CardTitle>
 
             </CardHeader>
             <CardContent>
-              <Overview data={ graphRevenue } />
+              { graphRevenue.find( ( { total } ) => total === 0 )
+                ? <div className="flex items-center justify-center w-full h-96 border rounded-sm">No Data Yet</div>
+                : <Overview data={ graphRevenue } />
+              }
             </CardContent>
           </Card>
         </div>

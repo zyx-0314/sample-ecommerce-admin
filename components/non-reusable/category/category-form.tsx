@@ -2,21 +2,27 @@
 
 import * as z from "zod"
 import axios from "axios"
-import { useState } from "react"
 import { Trash } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { useForm } from "react-hook-form"
+import { useEffect, useState } from "react"
 import { Billboard, Category } from "@prisma/client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
-import { useOrigin } from "@/hooks/use-origin"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { AlertModal } from "@/components/modals/alert-modal"
+import
+{
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import
 {
   Form,
@@ -46,11 +52,21 @@ export const CategoryForm = ( { initialData, billboards }: CategoryFormProps ) =
   const [ loading, setLoading ] = useState( false )
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
   const title = initialData ? "Edit Category" : "New Category"
   const description = initialData ? "Edit a Category" : "Add a New Category"
   const toastMessage = initialData ? "Category updated successfully" : "Category created successfully"
   const action = initialData ? "Update" : "Create"
+
+  useEffect( () =>
+  {
+    if ( billboards.length === 0 )
+    {
+      router.push( `/${ params.storeId }/billboards` )
+      router.refresh()
+      toast.error( 'No Billboards Yet' )
+    }
+
+  }, [ billboards ] )
 
   const form = useForm<CategoryFormValues>( {
     resolver: zodResolver( formSchema ),

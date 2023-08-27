@@ -1,9 +1,9 @@
-import prismadb from "@/lib/prismadb";
-import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 
-import { ProductView } from "@/components/non-reusable/products/product-view";
-import { ProductColumn } from "@/components/non-reusable/products/columns";
+import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
+import { ProductColumn } from "@/components/non-reusable/products/columns";
+import { ProductView } from "@/components/non-reusable/products/product-view";
 
 export default async function ProductPage (
   { params: { storeId } }: { params: { storeId: string } }
@@ -18,42 +18,42 @@ export default async function ProductPage (
     }
   } )
 
-  const sizes = await prismadb.size.findMany( {
-    where: {
-      storeId
-    },
-    select: {
-      name: true
-    }
-  } )
-
   const colors = await prismadb.color.findMany( {
     where: {
       storeId
-    },
-    select: {
-      name: true
     }
   } )
 
   const products = await prismadb.product.findMany( {
     where: { storeId: storeId },
-    include: { category: true, size: true, color: true },
+    include: { category: true },
     orderBy: { createdAt: "desc" },
   } );
 
-  const formattedProducts: ProductColumn[] = products.map( ( product ) => ( {
-    id: product.id,
-    name: product.name,
-    isFeatured: product.isFeatured,
-    isArchived: product.isArchived,
-    price: formatter.format( product.price.toNumber() ),
-    category: product.category.name,
-    size: product.size.name,
-    color: product.color.name,
-    createdAt: format( product.createdAt, "MMMM do, yyyy" ),
-    updatedAt: format( product.updatedAt, "MMMM do, yyyy" ),
-  } ) );
+
+  const formattedProducts: ProductColumn[] = products.map( ( product ) =>
+  {
+    const convertedColor =
+      product.color.split( ',' ).map( ( color ) => (
+        colors.find( ( { id } ) => id === color )?.value
+      ) )
+      ;
+
+    return {
+      subName: product.subName,
+      id: product.id,
+      name: product.name,
+      isFeatured: product.isFeatured,
+      isArchived: product.isArchived,
+      price: formatter.format( product.price ),
+      category: product.category.name,
+      size: product.size,
+      color: convertedColor.flat(),
+      stock: product.stock,
+      createdAt: formatDistanceToNow( product.createdAt ),
+      updatedAt: formatDistanceToNow( product.updatedAt ),
+    }
+  } );
 
   return (
     <div className="flex-col">
@@ -61,7 +61,6 @@ export default async function ProductPage (
         <ProductView
           data={ formattedProducts }
           categories={ categories }
-          sizes={ sizes }
           colors={ colors }
         />
       </div>

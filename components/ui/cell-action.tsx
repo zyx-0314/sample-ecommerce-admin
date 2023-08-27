@@ -4,7 +4,7 @@ import axios from "axios"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
 import { useParams, useRouter } from "next/navigation"
-import { CopyCheck, MoreHorizontal, PenBox, Trash2 } from "lucide-react"
+import { BookCopy, CopyCheck, MoreHorizontal, PenBox, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { AlertModal } from "@/components/modals/alert-modal"
@@ -32,7 +32,8 @@ export const CellAction = (
   const [ loading, setLoading ] = useState( false )
   const [ open, setOpen ] = useState( false )
 
-  const handleUpdateSize = () => router.push( `/${ params.storeId }/${ table }/${ data }` )
+  const handleUpdateProduct = () => router.push( `/${ params.storeId }/${ table }/${ data }` )
+  const handleDuplicate = () => router.push( `/${ params.storeId }/${ table }/${ data }?new=true` )
 
   const handleDelete = async () =>
   {
@@ -85,7 +86,11 @@ export const CellAction = (
             Copy ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={ () => handleUpdateSize() }>
+          <DropdownMenuItem onClick={ () => handleDuplicate() }>
+            <BookCopy className="w-4 h-4 mr-2" />
+            Duplicate
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={ () => handleUpdateProduct() }>
             <PenBox className="w-4 h-4 mr-2" />
             Update
           </DropdownMenuItem>

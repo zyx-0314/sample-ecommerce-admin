@@ -1,11 +1,20 @@
 'use client'
 
 import Link from "next/link";
+import { Menu } from 'lucide-react'
 import { useParams, usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLElement> ) =>
+import
+{
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
+const MobileMainNav = () =>
 {
   const pathname = usePathname()
   const params = useParams();
@@ -48,17 +57,35 @@ export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLEleme
   ]
 
   return (
-    <nav
-      className={ cn( 'flex items-center space-x-4 lg:space-x-6', className ) }
-    >
-      { routes.map( ( { href, label, active } ) => (
-        <Link
-          key={ href } href={ href }
-          className={ cn( 'text-sm font-medium transition-colors', active ? 'text-black dark:text-white' : 'text-gray-500 hover:text-primary' ) }
-        >
-          { label }
-        </Link>
-      ) ) }
-    </nav>
-  );
+    <div className="hidden sm:block">
+      <Sheet>
+        <SheetTrigger>
+          <div
+            className="border rounded-md p-2 cursor-pointer hover:bg-gray-200 transition-all dark:hover:bg-slate-900"
+          >
+            <Menu className='h-6 w-6' />
+          </div>
+        </SheetTrigger>
+        <SheetContent>
+          <nav
+            className={ cn( 'pt-5 flex flex-col space-x-4 space-y-6', ) }
+          >
+            { routes.map( ( { href, label, active } ) => (
+              <Link
+                key={ href } href={ href }
+                className={ cn( 'text-md font-medium transition-colors', active ? 'text-black dark:text-white' : 'text-gray-500 hover:text-primary' ) }
+              >
+                <SheetClose>
+                  { label }
+                </SheetClose>
+              </Link>
+            ) ) }
+          </nav>
+        </SheetContent>
+      </Sheet>
+    </div>
+  )
+
 }
+
+export default MobileMainNav

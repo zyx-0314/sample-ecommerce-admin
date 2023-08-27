@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 
-import { CellAction } from "@/components/ui/cell-action"
 import { formattedHeader } from "@/components/ui/table-header"
 
 export type OrderColumn = {

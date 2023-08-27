@@ -15,11 +15,10 @@ interface ProductViewProps
 {
   data: ProductColumn[]
   categories: { name: string }[]
-  sizes: { name: string }[]
   colors: { name: string }[]
 }
 
-export const ProductView = ( { data, categories, sizes, colors }: ProductViewProps ) =>
+export const ProductView = ( { data, categories, colors }: ProductViewProps ) =>
 {
   const [ isMounted, setIsMounted ] = useState( false )
   const router = useRouter()
@@ -29,8 +28,8 @@ export const ProductView = ( { data, categories, sizes, colors }: ProductViewPro
 
   if ( !isMounted ) return null
 
+  // this set filter options for headings
   filterSetter( {
-    size: sizes.map( item => item.name ),
     color: colors.map( item => item.name ),
     category: categories.map( item => item.name )
   } )

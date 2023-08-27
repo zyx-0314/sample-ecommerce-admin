@@ -1,9 +1,9 @@
-import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 
-import { OrderView } from "@/components/non-reusable/order/order-view";
-import { OrderColumn } from "@/components/non-reusable/order/columns";
+import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
+import { OrderColumn } from "@/components/non-reusable/order/columns";
+import { OrderView } from "@/components/non-reusable/order/order-view";
 
 export default async function OrderPage (
   { params: { storeId } }: { params: { storeId: string } }

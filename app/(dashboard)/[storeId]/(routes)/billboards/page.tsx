@@ -1,8 +1,8 @@
-import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 
-import { BillboardView } from "@/components/non-reusable/billboard/billboard-view";
+import prismadb from "@/lib/prismadb";
 import { BillboardColumn } from "@/components/non-reusable/billboard/columns";
+import { BillboardView } from "@/components/non-reusable/billboard/billboard-view";
 
 export default async function BillboardPage (
   { params: { storeId } }: { params: { storeId: string } }

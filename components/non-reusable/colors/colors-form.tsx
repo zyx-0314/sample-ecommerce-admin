@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
-import { useOrigin } from "@/hooks/use-origin"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
@@ -44,13 +43,14 @@ export const ColorForm = ( { initialData }: ColorFormProps ) =>
 {
   const [ open, setOpen ] = useState( false )
   const [ loading, setLoading ] = useState( false )
+  const [ another, setAnother ] = useState( false )
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
   const title = initialData ? "Edit Color" : "New Color"
   const description = initialData ? "Edit a Color" : "Add a New Color"
   const toastMessage = initialData ? "Color updated successfully" : "Color created successfully"
   const action = initialData ? "Update" : "Create"
+  const secondaryAction = initialData ? "Add New Color" : "Submit Another"
 
   const form = useForm<ColorFormValues>( {
     resolver: zodResolver( formSchema ),
@@ -62,6 +62,7 @@ export const ColorForm = ( { initialData }: ColorFormProps ) =>
 
   const handleSubmit = async ( values: ColorFormValues ) =>
   {
+    values.value = values.value.toUpperCase()
     try
     {
       setLoading( true )
@@ -73,10 +74,16 @@ export const ColorForm = ( { initialData }: ColorFormProps ) =>
           {
             toast.success( toastMessage )
             router.refresh()
-            router.push( `/${ params.storeId }/colors` )
+            if ( another ) router.push( `/${ params.storeId }/colors/new` )
+            else router.push( `/${ params.storeId }/colors` )
           } )
           .catch( ( error ) => toast.error( error.response.data ) )
-          .finally( () => setLoading( false ) )
+          .finally( () =>
+          {
+            setLoading( false )
+            setAnother( false )
+            if ( another ) window.location.reload();
+          } )
       }
       else
       {
@@ -86,10 +93,17 @@ export const ColorForm = ( { initialData }: ColorFormProps ) =>
           {
             toast.success( toastMessage )
             router.refresh()
-            router.push( `/${ params.storeId }/colors` )
+            if ( another ) router.push( `/${ params.storeId }/colors/new` )
+            else router.push( `/${ params.storeId }/colors` )
           } )
           .catch( ( error ) => toast.error( error.response.data ) )
-          .finally( () => setLoading( false ) )
+          .finally( () =>
+          {
+            setLoading( false )
+            setAnother( false )
+            if ( another ) window.location.reload();
+
+          } )
       }
 
     }
@@ -185,10 +199,21 @@ export const ColorForm = ( { initialData }: ColorFormProps ) =>
               } }
             />
           </div>
-          <Button disabled={ loading } className="ml-auto" type="submit">
-            { action }
-          </Button>
-          <Separator />
+          <div className="justify-end w-full flex">
+            <div className="flex gap-x-2">
+              <Button
+                disabled={ loading }
+                variant='secondary'
+                type="submit"
+                onClick={ () => setAnother( true ) }
+              >
+                { secondaryAction }
+              </Button>
+              <Button disabled={ loading } type="submit">
+                { action }
+              </Button>
+            </div>
+          </div>
         </form>
       </Form>
     </>

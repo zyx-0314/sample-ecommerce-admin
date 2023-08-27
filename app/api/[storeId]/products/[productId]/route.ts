@@ -19,8 +19,6 @@ export async function GET(
 			include: {
 				images: true,
 				category: true,
-				size: true,
-				color: true,
 			},
 		});
 
@@ -42,12 +40,15 @@ export async function PATCH(
 		const body = await request.json();
 
 		const {
+			subName,
 			name,
 			images,
 			price,
+			stock,
 			categoryId,
-			sizeId,
-			colorId,
+			size,
+			color,
+			details,
 			isArchived,
 			isFeatured,
 		} = body;
@@ -65,9 +66,9 @@ export async function PATCH(
 		if (!categoryId)
 			return new NextResponse('Category is required', { status: 400 });
 
-		if (!sizeId) return new NextResponse('Size is required', { status: 400 });
+		if (!size) return new NextResponse('Size is required', { status: 400 });
 
-		if (!colorId) return new NextResponse('Color is required', { status: 400 });
+		if (!color) return new NextResponse('Color is required', { status: 400 });
 
 		if (!params.storeId)
 			return new NextResponse('Store Id Required', { status: 401 });
@@ -101,11 +102,14 @@ export async function PATCH(
 				storeId: params.storeId,
 			},
 			data: {
+				subName,
 				name,
 				price,
+				stock,
 				categoryId,
-				sizeId,
-				colorId,
+				size,
+				color,
+				details,
 				isArchived,
 				isFeatured,
 				images: {
@@ -169,7 +173,7 @@ export async function DELETE(
 			},
 		});
 
-		console.log
+		console.log;
 
 		if (productInOrderItem)
 			return new NextResponse('Product in use', { status: 403 });

@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import
 {
   ColumnDef,
@@ -38,7 +38,7 @@ interface DataTableProps<TData, TValue>
 {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  searchKey: string
+  searchKey: string | string[]
 }
 
 export function DataTable<TData, TValue> ( {
@@ -70,15 +70,43 @@ export function DataTable<TData, TValue> ( {
     },
   } )
 
+  useEffect( () =>
+  {
+    table.getAllColumns().forEach( ( column ) =>
+    {
+      const toHide = [ 'createdAt', 'isArchived' ]
+      if ( column === table.getColumn( 'id' ) || toHide.includes( column.id ) )
+        column.toggleVisibility( false )
+    } )
+  }, [] )
+
+  const cellFormat = ( cell: any ) =>
+  {
+    if ( cell.column.id.includes( 'updatedAt' ) || cell.column.id.includes( 'createdAt' ) )
+      return 'w-min-fit max-w-[150px] text-center'
+    else if ( cell.id.includes( 'actions' ) )
+      return 'w-[1px] w-[min-content] text-center'
+    else
+      return 'w-[-webkit-fill-available] max-w-[300px] text-center'
+  }
+
   return (
     <div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Search..."
-          value={ ( table.getColumn( searchKey )?.getFilterValue() as string ) ?? "" }
-          onChange={ ( event ) =>
+          value={ ( table.getColumn( Array.isArray( searchKey ) ? "" : searchKey )?.getFilterValue() as string ) ?? "" }
+          onChange={ ( event: any ) =>
           {
-            table.getColumn( searchKey )?.setFilterValue( event.target.value )
+            if ( !Array.isArray( searchKey ) )
+              table.getColumn( searchKey )?.setFilterValue( event.target.value )
+            else
+            {
+              searchKey.forEach( ( key ) =>
+              {
+                table.getColumn( key )?.setFilterValue( event.target.value )
+              } )
+            }
           }
           }
           className="max-w-sm"
@@ -95,11 +123,11 @@ export function DataTable<TData, TValue> ( {
               .filter(
                 ( column ) => column.getCanHide()
               )
-              .map( ( column ) =>
+              .map( ( column, index ) =>
               {
                 return (
                   <DropdownMenuCheckboxItem
-                    key={ column.id }
+                    key={ 'column' + index }
                     className="capitalize"
                     checked={ column.getIsVisible() }
                     onCheckedChange={ ( value: any ) =>
@@ -116,12 +144,12 @@ export function DataTable<TData, TValue> ( {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            { table.getHeaderGroups().map( ( headerGroup ) => (
-              <TableRow key={ headerGroup.id }>
-                { headerGroup.headers.map( ( header ) =>
+            { table.getHeaderGroups().map( ( headerGroup, index ) => (
+              <TableRow key={ 'headerGroup' + index }>
+                { headerGroup.headers.map( ( header, index ) =>
                 {
                   return (
-                    <TableHead key={ header.id } id='label'>
+                    <TableHead key={ 'tableHead' + index } id='label'>
                       { header.isPlaceholder
                         ? null
                         : flexRender(
@@ -136,13 +164,13 @@ export function DataTable<TData, TValue> ( {
           </TableHeader>
           <TableBody>
             { table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map( ( row ) => (
+              table.getRowModel().rows.map( ( row, index ) => (
                 <TableRow
-                  key={ row.id }
+                  key={ 'tableRow' + index }
                   data-state={ row.getIsSelected() && "selected" }
                 >
-                  { row.getVisibleCells().map( ( cell ) => (
-                    <TableCell key={ cell.id }>
+                  { row.getVisibleCells().map( ( cell, index ) => (
+                    <TableCell key={ 'tableCell' + index } className={ cellFormat( cell ) }>
                       { flexRender( cell.column.columnDef.cell, cell.getContext() ) }
                     </TableCell>
                   ) ) }
@@ -171,10 +199,10 @@ export function DataTable<TData, TValue> ( {
             onClick={ () => table.previousPage() }
             disabled={ !table.getCanPreviousPage() }
           >
-            Previous
+            Prev
           </Button>
           <div className='mx-6 px-3 border-b-2 border-primary '>
-            { table.getPageOptions()[ 0 ] + 1 }
+            { table.getPageOptions()[ 0 ] ? table.getPageOptions()[ 0 ] + 1 : 1 }
           </div>
           <Button
             variant="outline"
