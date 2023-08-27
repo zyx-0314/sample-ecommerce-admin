@@ -46,7 +46,7 @@ export const ApiAlert = ( {
         </Badge>
       </AlertTitle>
       <AlertDescription className="mt-4 flex items-center justify-between">
-        <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+        <code className="relative rounded bg-muted font-mono text-sm font-semibold w-full p-2.5">
           { description }
         </code>
         <Button variant='outline' size='icon' onClick={ () => handleCopy() }>

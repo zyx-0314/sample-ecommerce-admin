@@ -476,7 +476,7 @@ export const ProductForm = ( { initialData, categories, colors, duplicate }: Pro
               render={ ( { field } ) =>
               (
                 <FormItem
-                  className={ `flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 transition-all ${ loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-900' }` }
+                  className={ `flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 transition-all ${ loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer dark:hover:bg-neutral-900 hover:bg-neutral-100' }` }
                   onClick={ () =>
                   {
                     if ( !loading )
@@ -506,7 +506,7 @@ export const ProductForm = ( { initialData, categories, colors, duplicate }: Pro
               render={ ( { field } ) =>
               (
                 <FormItem
-                  className={ `flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 transition-all ${ loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-900' }` }
+                  className={ `flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 transition-all ${ loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer dark:hover:bg-neutral-900 hover:bg-neutral-100' }` }
                   onClick={ () =>
                   {
                     if ( !loading )
