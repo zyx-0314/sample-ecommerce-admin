@@ -44,13 +44,12 @@ const FacetSelection = (
         <div className="w-full p-[5px]">
           {
             data.map( ( { value, name, id } ) => (
-              <>
+              <div key={ id }>
                 { isColor
                   ?
                   <div
                     className="flex rounded-sm gap-x-2 p-2 items-center cursor-pointer hover:bg-gray-900"
                     onClick={ () => onChange( value, id ) }
-                    key={ id }
                   >
                     <span style={ { background: value } } className="h-6 w-6 rounded-full border-2 p-2 border-gray-500" />
                     { name }
@@ -58,7 +57,7 @@ const FacetSelection = (
                   :
                   <div></div>
                 }
-              </>
+              </div>
             ) )
           }
           { selectedData.length > 0 &&
