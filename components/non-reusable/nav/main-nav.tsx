@@ -9,6 +9,8 @@ export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLEleme
 {
   const pathname = usePathname()
   const params = useParams();
+
+
   const routes = [
     {
       href: `/${ params.storeId }`,
@@ -18,7 +20,7 @@ export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLEleme
     {
       href: `/${ params.storeId }/products`,
       label: 'Products',
-      active: pathname === `/${ params.storeId }/products`
+      active: pathname.match( `/${ params.storeId }/products` )
     },
     {
       href: `/${ params.storeId }/orders`,
@@ -28,17 +30,17 @@ export const MainNav = ( { className, ...props }: React.HTMLAttributes<HTMLEleme
     {
       href: `/${ params.storeId }/billboards`,
       label: 'Billboards',
-      active: pathname === `/${ params.storeId }/billboards`
+      active: pathname.match( `/${ params.storeId }/billboards` )
     },
     {
       href: `/${ params.storeId }/categories`,
       label: 'Categories',
-      active: pathname === `/${ params.storeId }/categories`
+      active: pathname.match( `/${ params.storeId }/categories` )
     },
     {
       href: `/${ params.storeId }/colors`,
       label: 'Colors',
-      active: pathname === `/${ params.storeId }/colors`
+      active: pathname.match( `/${ params.storeId }/colors` )
     },
     {
       href: `/${ params.storeId }/settings`,
