@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs"
-import prismadb from "@/lib/prismadb"
 import { redirect } from "next/navigation"
 
+import prismadb from "@/lib/prismadb"
 import { Navbar } from "@/components/non-reusable/nav/navbar"
 
 interface DashboardLayoutProps
